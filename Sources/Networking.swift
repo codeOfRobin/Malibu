@@ -34,23 +34,14 @@ public final class Networking<R: RequestConvertible>: NSObject, URLSessionDelega
     promise.resolve(Void())
   }
 
-  let sessionConfiguration: SessionConfiguration
   let mockProvider: MockProvider<R>?
   let queue: OperationQueue
+
+	let session: URLSession
 
   var customHeaders = [String: String]()
   var requestStorage = RequestStorage()
   var mode: NetworkingMode = .async
-
-  weak var sessionDelegate: URLSessionDelegate?
-
-  lazy var session: URLSession = { [unowned self] in
-    let session = URLSession(
-      configuration: self.sessionConfiguration.value,
-      delegate: self.sessionDelegate ?? self,
-      delegateQueue: nil)
-    return session
-  }()
 
   var requestHeaders: [String: String] {
     var headers = customHeaders
@@ -68,12 +59,10 @@ public final class Networking<R: RequestConvertible>: NSObject, URLSessionDelega
 
   public init(mode: NetworkingMode = .async,
               mockProvider: MockProvider<R>? = nil,
-              sessionConfiguration: SessionConfiguration = SessionConfiguration.default,
-              sessionDelegate: URLSessionDelegate? = nil) {
+              session: URLSession = .shared) {
     self.mockProvider = mockProvider
-    self.sessionConfiguration = sessionConfiguration
-    self.sessionDelegate = sessionDelegate
     queue = OperationQueue()
+		self.session = session
     super.init()
     reset(mode: mode)
   }
