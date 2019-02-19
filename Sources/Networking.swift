@@ -59,13 +59,23 @@ public final class Networking<R: RequestConvertible>: NSObject, URLSessionDelega
 
   public init(mode: NetworkingMode = .async,
               mockProvider: MockProvider<R>? = nil,
-              session: URLSession = .shared) {
+              session: URLSession) {
     self.mockProvider = mockProvider
     queue = OperationQueue()
 		self.session = session
     super.init()
     reset(mode: mode)
   }
+
+  public init(mode: NetworkingMode = .async,
+              mockProvider: MockProvider<R>? = nil,
+              configuration: SessionConfiguration = .default) {
+		self.mockProvider = mockProvider
+		queue = OperationQueue()
+		self.session = URLSession(configuration: configuration.value)
+		super.init()
+		reset(mode: mode)
+	}
 
   public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
     var disposition: URLSession.AuthChallengeDisposition = .performDefaultHandling
