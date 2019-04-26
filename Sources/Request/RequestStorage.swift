@@ -25,9 +25,13 @@ final class RequestStorage {
   }
 
   func saveAll() {
-    let data = NSKeyedArchiver.archivedData(withRootObject: requests)
-    userDefaults.set(data, forKey: key)
-    userDefaults.synchronize()
+	if #available(OSX 10.11, *) {
+		let data = NSKeyedArchiver.archivedData(withRootObject: requests)
+		userDefaults.set(data, forKey: key)
+		userDefaults.synchronize()
+	} else {
+		// Fallback on earlier versions
+	}
   }
 
   // MARK: - Remove
